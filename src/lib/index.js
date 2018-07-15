@@ -50,7 +50,7 @@ function readConfig(path) {
  * @param {String} path Path to base folder
  * @returns {Boolean}
  */
-function initConfig(path) {
+async function initConfig(path) {
   const templateDir = pathlib.join(__dirname, "..", "templates");
   if (!fs.existsSync(pathlib.join(path, "records"))) {
     fs.mkdirSync(pathlib.join(path, "records"));
@@ -71,6 +71,41 @@ function initConfig(path) {
     pathlib.join(path, "records", "mx.yml"),
     fs.readFileSync(pathlib.join(templateDir, "records", "mx.yml"))
   );
+  await addGit(path);
+  await commitGit(path, "add config files");
+}
+
+/**
+ * Stage changes in git
+ *
+ * @param {String} path Path to repository
+ * @returns {Boolean}
+ */
+async function addGit(path) {
+  const result = await GitProcess.exec(["add", "* ."], path);
+  if (result.exitCode === 0) {
+    initConfig(path);
+    return true;
+  } else {
+    return false;
+  }
+}
+
+/**
+ * Commit changes in git
+ *
+ * @param {String} path Path to repository
+ * @param {String} message Commit message
+ * @returns {Boolean}
+ */
+async function commitGit(path, message) {
+  const result = await GitProcess.exec(["commit", "-m", message], path);
+  if (result.exitCode === 0) {
+    initConfig(path);
+    return true;
+  } else {
+    return false;
+  }
 }
 
 /**
@@ -82,7 +117,7 @@ function initConfig(path) {
 async function initGitRepo(path) {
   const result = await GitProcess.exec(["init", path]);
   if (result.exitCode === 0) {
-    initConfig(path);
+    await initConfig(path);
     return true;
   } else {
     return false;
