@@ -1,5 +1,7 @@
 ---
 permalink: /
 ---
+
 # DNSmanage
+
 ## Welcome!
