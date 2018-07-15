@@ -1,0 +1,25 @@
+{
+  "name": "dnsmanage",
+  "version": "0.1.0",
+  "description": "Manage multiple dns providers using one command",
+  "main": "src/index.js",
+  "repository": "https://github.com/MagicMarvMan/dnsmanage.git",
+  "author": "MagicMarvMan <24806960+MagicMarvMan@users.noreply.github.com>",
+  "license": "MIT",
+  "private": false,
+  "dependencies": {
+    "chalk": "2.4.1",
+    "dugite": "^1.68.0",
+    "js-yaml": "3.12.0"
+  },
+  "devDependencies": {
+    "mocha": "5.2.0",
+    "nyc": "12.0.2"
+  },
+  "bin": {
+    "dnsmanage": "src/index.js"
+  },
+  "scripts": {
+    "start": "node src/index.js"
+  }
+}
