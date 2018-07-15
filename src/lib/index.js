@@ -1,7 +1,8 @@
 const chalk = require("chalk");
 const fs = require("fs");
+const pathlib = require("path");
 const yaml = require("js-yaml");
-
+const { GitProcess } = require("dugite");
 
 /**
  * Logs specific string to console
@@ -34,20 +35,65 @@ function error(string) {
 function readConfig(path) {
   // Load configuration file with utf-8 charset
   try {
-    const file = fs.readFileSync(path, 'utf-8');
+    const file = fs.readFileSync(path, "utf-8");
     const doc = yaml.safeLoad(file);
     return doc;
-  } catch(e) {
+  } catch (e) {
     error(e);
     return {};
   }
 }
 
+/**
+ * Initializes the config files
+ *
+ * @param {String} path Path to base folder
+ * @returns {Boolean}
+ */
+function initConfig(path) {
+  const templateDir = pathlib.join(__dirname, "..", "templates");
+  if (!fs.existsSync(pathlib.join(path, "records"))) {
+    fs.mkdirSync(pathlib.join(path, "records"));
+  }
+  fs.writeFileSync(
+    pathlib.join(path, "config.yml"),
+    fs.readFileSync(pathlib.join(templateDir, "config.yml"))
+  );
+  fs.writeFileSync(
+    pathlib.join(path, "records", "a.yml"),
+    fs.readFileSync(pathlib.join(templateDir, "records", "a.yml"))
+  );
+  fs.writeFileSync(
+    pathlib.join(path, "records", "cname.yml"),
+    fs.readFileSync(pathlib.join(templateDir, "records", "cname.yml"))
+  );
+  fs.writeFileSync(
+    pathlib.join(path, "records", "mx.yml"),
+    fs.readFileSync(pathlib.join(templateDir, "records", "mx.yml"))
+  );
+}
+
+/**
+ * Initialize git repository
+ *
+ * @param {String} path Path to repository
+ * @returns {Boolean}
+ */
+async function initGitRepo(path) {
+  const result = await GitProcess.exec(["init", path]);
+  if (result.exitCode === 0) {
+    initConfig(path);
+    return true;
+  } else {
+    return false;
+  }
+}
 
 // Export all functions
 module.exports = {
   log,
   error,
   readConfig,
+  initGitRepo,
   providers: require("./providers")
-}
+};

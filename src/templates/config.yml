@@ -1,0 +1,6 @@
+providers:
+  - YAML
+
+credentials:
+  YAML:
+    file: result.yml
