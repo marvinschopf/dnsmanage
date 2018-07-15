@@ -149,3 +149,8 @@ $RECYCLE.BIN/
 
 # DNS
 dns
+
+# Binaries
+index-linux
+index-macos
+index-win.exe
